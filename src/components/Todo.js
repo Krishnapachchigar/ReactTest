@@ -1,24 +1,59 @@
 import React, { useState } from 'react'
-import TodoItem from './TodoItem'
 
 function Todo() {
 
-    const [text, setText] = useState("")
     const [todos, setTodos] = useState([{
-        id: null,
-        todo: ""
+        id: 1,
+        todo: "krishna"
     }])
+    const [text, setText] = useState("")
+    const [id, setId] = useState(null)
+    const [isedit, setEdit] = useState(false)
+
+    const handleDelete = (id) => {
+        const newTodo = todos.filter((data) => {
+            return data.id !== id
+        })
+        setTodos(newTodo)
+    }
+
+    const handleEdit = (id) => {
+        const editTodo = todos.find((data) => {
+            return data.id === id
+        })
+        setEdit(true)
+        setText(editTodo.todo)
+        setId(editTodo.id)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        let id = todos.length + 1;
-        const newArray = {
-            id: id,
-            todo: text
+        handleAdd()
+    }
+
+    const handleAdd = () => {
+        if (isedit) {
+            setTodos(
+                todos.map(data => {
+                    if (data.id === id) {
+                        return { ...data, id: id, todo: text }
+                    }
+                    return data
+                })
+            )
+            setText("")
+            setEdit(false)
+        } else {
+            let id = todos.length + 1;
+            const newArray = {
+                id: id,
+                todo: text
+            }
+            setTodos([...todos, (newArray)])
+            setText("")
+            setId(null)
+            console.log(todos)
         }
-        setTodos([...todos, (newArray)])
-        setText("")
-        console.log(todos)
     }
 
     return (
@@ -32,15 +67,15 @@ function Todo() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                 />
-                <button>Add</button>
+                {isedit ? <button>Edit</button> : <button>Add</button>}
             </form>
             {
                 todos.map(data => {
                     return (
                         <div>
                             <p>{data.todo}</p>
-                            <button>Edit</button>
-                            <button>Delete</button>
+                            <button onClick={() => handleEdit(data.id)}>Edit</button>
+                            <button onClick={() => handleDelete(data.id)}>Delete</button>
                         </div>
                     )
                 })
