@@ -3,16 +3,21 @@ import TodoItem from './TodoItem'
 
 function Todo() {
 
-    const [todos, setTodo] = useState({
-        id:null,
-        todo:""
-    })
-    
+    const [text, setText] = useState("")
+    const [todos, setTodos] = useState([{
+        id: null,
+        todo: ""
+    }])
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        setTodo({
-            ...todos, id: todos.id, todo: todos.todo
-        })
+        let id = todos.length + 1;
+        const newArray = {
+            id: id,
+            todo: text
+        }
+        setTodos([...todos, (newArray)])
+        setText("")
         console.log(todos)
     }
 
@@ -24,12 +29,22 @@ function Todo() {
                 <input
                     type='text'
                     name='todo'
-                    value={todos.todo}
-                    onChange={(e) => setTodo({...todos, todo:e.target.value})}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
                 />
                 <button>Add</button>
             </form>
-            <TodoItem data={todos}/>
+            {
+                todos.map(data => {
+                    return (
+                        <div>
+                            <p>{data.todo}</p>
+                            <button>Edit</button>
+                            <button>Delete</button>
+                        </div>
+                    )
+                })
+            }
         </>
     )
 }
